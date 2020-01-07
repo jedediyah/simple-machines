@@ -1,0 +1,14 @@
+.tree-node {
+    padding: 2px 2px 2px 50px;
+    background-color: #ddd;
+    border-left: solid black 1px;
+    font-size: 14px;
+    font-family: Courier new; 
+}
+.game-tree {
+    background-color:#ddf;
+    border: solid black 1px;
+    margin: auto; 
+    display: table; 
+    width:1px; 
+}
