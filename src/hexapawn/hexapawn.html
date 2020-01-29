@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<style>
+.board-square {
+    width: 50px;
+    height: 50px;
+    border: solid black 1px;
+    display: inline-grid;
+    padding: 0px 0px 0px 0px;
+    margin: 0px;
+    font-size: 35px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<!-- Game board -->
+<div style="text-align:center;display:inline-grid;vertical-align:top;margin-left:50px;">
+<br><br><br><br><br><br><br><br>&nbsp;
+    <h3>Hexapawn</h3>
+    
+	    <div id="hexaboard" style="border:2px solid white;"><table style="border-collapse:collapse;table-layout:fixed;margin:auto;">
+		    <tr><td class="board-square" id="board00" onclick="board_click(0,0)"><img src="pawnblack.png"></td><td class="board-square" id="board01" onclick="board_click(0,1)"></td><td class="board-square" id="board02" onclick="board_click(0,2)">&nbsp;</td>
+		    </tr>
+		    <tr><td class="board-square" id="board10" onclick="board_click(1,0)">&nbsp;</td><td class="board-square" id="board11" onclick="board_click(1,1)">&nbsp;</td><td class="board-square" id="board12" onclick="board_click(1,2)">&nbsp;</td>
+		    </tr>
+		    <tr><td class="board-square" id="board20" onclick="board_click(2,0)">&nbsp;</td><td class="board-square" id="board21" onclick="board_click(2,1)">&nbsp;</td><td class="board-square" id="board22" onclick="board_click(2,2)">&nbsp;</td>
+		    </tr>
+	    </table></div>
+    <br>
+    <button onclick="new_game('hvh');">Human v. <br>Human</button>
+    <button onclick="new_game('hvm');">Human v. <br>Machine</button>
+    <button onclick="new_game('mvm');">Machine v. <br>Machine</button>
+</div>
+<!-- Game stats -->
+
+<div style="display:inline-grid;">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../gametree.css">
+    <script src="../game_tree.js"></script>
+    <script src="hexapawn.js"></script>
+    <script>
+    make_root('BBB/---/WWW'); 
+    new_game('hvh'); 
+
+    </script>
+</div>
+
+</body>
+</html>
