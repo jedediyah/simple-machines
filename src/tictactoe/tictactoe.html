@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<style>
+.ttt-square {
+    width: 40px;
+    height: 30px;
+    border: solid black 1px;
+    display: inline-grid;
+    padding: 5px 4px 12px 4px;
+    margin: 0px;
+    font-size: 35px;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<!-- Game board -->
+<div style="text-align:center;display:inline-grid;vertical-align:top;margin-left:50px;">
+<br><br><br><br><br><br><br><br>&nbsp;
+    <h3>Tic Tac Toe</h3>
+	    <table style="border-collapse:collapse;table-layout:fixed;margin:auto;">
+		    <tr><td class="ttt-square" id="ttt00" onclick="ttt_click(0,0)">&nbsp;</td><td class="ttt-square" id="ttt01" onclick="ttt_click(0,1)"></td><td class="ttt-square" id="ttt02" onclick="ttt_click(0,2)">&nbsp;</td>
+		    </tr>
+		    <tr><td class="ttt-square" id="ttt10" onclick="ttt_click(1,0)">&nbsp;</td><td class="ttt-square" id="ttt11" onclick="ttt_click(1,1)">&nbsp;</td><td class="ttt-square" id="ttt12" onclick="ttt_click(1,2)">&nbsp;</td>
+		    </tr>
+		    <tr><td class="ttt-square" id="ttt20" onclick="ttt_click(2,0)">&nbsp;</td><td class="ttt-square" id="ttt21" onclick="ttt_click(2,1)">&nbsp;</td><td class="ttt-square" id="ttt22" onclick="ttt_click(2,2)">&nbsp;</td>
+		    </tr>
+	    </table>
+    <br>
+    <button onclick="new_game('hvh');">Human v. <br>Human</button>
+    <button onclick="new_game('hvm');">Human v. <br>Machine</button>
+    <button onclick="new_game('mvm');">Machine v. <br>Machine</button>
+</div>
+<!-- Game stats -->
+
+<div style="display:inline-grid;">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../gametree.css">
+    <script src="../game_tree.js"></script>
+    <script src="tictactoe.js"></script>
+    <script>
+    make_root('---/---/---'); 
+
+    // Test graph
+    //update_tree(['--X/---/---','--X/-O-/---','--X/-O-/X--']); 
+    //update_tree(['---/---/--X','---/-O-/--X','---/-O-/X-X','---/-O-/XOX']); 
+    //update_tree(['X--/---/---','X--/-O-/---','X--/-O-/X--','X--/-O-/XO-']); 
+
+    </script>
+</div>
+
+</body>
+</html>
