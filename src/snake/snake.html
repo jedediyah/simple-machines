@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<script src='snake.js'></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+ 
+  
+  <div id='selector'>
+    Number of snakes: <input type="text" id="snake_count" value="100"><br>
+    <button onclick="start()">Run!</button>
+  </div>
+  
+  
+<script>
+  var num_games = 100;
+  var board_size = 87; //118; 
+  var mutation_rate = 0.06; 
+  var num_best_to_take = 5;  // How many best-performing snakes create the next generation
+  var generation = 0; 
+  var fitness_history = []; 
+  var wait_time = 10; 
+  var games = []; 
+  
+  function drawBasic() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('number', '');
+    data.addColumn('number', '');
+    data.addRows(fitness_history);
+    var options = {
+      hAxis: {
+        title: 'Generation'
+      },
+      vAxis: {
+        title: 'Fitness'
+      },
+      legend: {
+        position: 'none'
+      }
+    };
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+ 
+  function make_game(id) {
+    // Create and start game
+    var game = new Game('snake_canvas_'+id);
+    game.run(); 
+    return game; 
+  }
+  
+  function mutate_game(old_game,id) {
+    // Create and start game
+    //var game = new Game(c.id);
+    var game = new Game('snake_canvas_' + id);
+    
+    if (Math.random()>0.01) {  // 1% chance of alien mutant
+      // Copy genes
+      for (var i=0; i<old_game.weights.length; i++) {
+        for (var j=0; j<old_game.weights[0].length; j++) {
+          if (Math.random()>mutation_rate) {
+            game.weights[i][j] = old_game.weights[i][j]; 
+          }
+        }
+      }
+    }    
+    game.run(); 
+    return game; 
+  }
+  
+  function insert(game,game_list) {
+    for (var i=0; i<game_list.length; i++) {
+      if (game.fitness > game_list[i].fitness) {
+        game_list.splice(i,0,game);
+        return game_list; 
+      }
+    } 
+    return game_list.push(game);
+  }
+  
+  function iterate(games) {
+    for (i=0; i<games.length; i++) {
+      if (games[i].keep_running) {
+        setTimeout(function(){ iterate(games);}, 500);
+        return; 
+      } 
+    }
+    // Games are done
+    
+    // Search for best 5 games
+    var top_games = [games[0]];
+    for (var i=1; i<num_best_to_take; i++) {
+      insert(games[i],top_games);
+    } 
+    
+    for (var i=num_best_to_take; i<games.length; i++) {
+      if (games[i].fitness > top_games[num_best_to_take-1].fitness) {
+        insert(games[i],top_games);
+      }
+    }
+    
+    console.log('Completed generation ' + generation + '  Best fitness: ' + top_games[0].fitness);
+    document.getElementById('output').innerHTML = 'Completed generation ' + generation + '.  Best fitness: ' + top_games[0].fitness;    
+    fitness_history.push([generation,top_games[0].fitness]);
+    drawBasic(); 
+    generation +=1 ; 
+        
+    if (top_games[0].fitness<3.0 && generation%5==0) {
+      // Scrap all the snakes and start over!
+      games = [];
+      for (var i=0; i<num_games; i++) {
+        games.push(make_game(i)); 
+      }
+    } else {         
+          
+      // Create new games
+      games = [];
+      indices = [0]; 
+      di = Math.round(num_games/num_best_to_take); 
+      for (var i=1; i<num_best_to_take; i++) {
+        indices.push(indices[i-1]+di); 
+      }
+      indices.push(num_games);
+      
+      id = 0
+      for (var i=0; i<indices.length-1; i++) {
+        for (var j=indices[i]; j<indices[i+1]; j++) {
+          games.push(mutate_game(top_games[i],id));
+          id += 1;  
+        }
+      }
+    }
+    //update_wait_time(); 
+    
+    setTimeout(function(){ iterate(games);}, 500);    
+  }
+  
+  function update_grid_size() {
+    board_size = document.getElementById('grid_size').value;
+    for (var id=0; id<num_games; id++) {
+      document.getElementById('snake_canvas_'+id).width = board_size; 
+      document.getElementById('snake_canvas_'+id).height = board_size; 
+    }
+    document.getElementById('bsize').innerHTML = board_size; 
+  }
+  
+  function update_mutation_rate() {
+    new_rate = document.getElementById('mutation_rate').value; 
+    mutation_rate = parseFloat(new_rate)/100.0; 
+    document.getElementById('mrate').innerHTML = new_rate + '%'; 
+  }
+  
+  function update_wait_time() {
+    wait_time = 500-parseInt(document.getElementById('wait_time').value); 
+    console.log(wait_time); 
+    console.log(games.length); 
+    for (var i=0; i<games.length; i++) {
+      games[i].wait_time = wait_time;
+    }
+  }
+  
+  function add_snake() {   
+   document.write('<canvas width="' + board_size + '" height="' + board_size + '" id="snake_canvas_' + num_games + '"></canvas> ');
+   num_games += 1;
+  }
+   
+  
+  function start() {
+  
+    if (document.getElementById('snake_count')!='') {
+      num_games = parseInt(document.getElementById('snake_count').value);
+    }
+    document.write('<table><tr><td>');
+    //document.write('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Slow <input type="range" id="wait_time" onchange="update_wait_time();" min="0" max="490" value="490"> Fast<br><br>');
+    document.write('&nbsp;&nbsp;&nbsp;&nbsp;Board size: <input type="range" id="grid_size" onchange="update_grid_size();" min="30" max="200" value="87"> <span id="bsize">87</span><br><br>');
+    document.write('Mutation rate: <input type="range" id="mutation_rate" onchange="update_mutation_rate();" min="0" max="20" value="6"> <span id="mrate">6%</span><br><br>');
+    document.write('<button onclick="add_snake();">Add snake</button> (to next generation)');
+    document.write('<br><br><div id="output">Generation 0 running...</div><br>');
+    document.write('</td><td>'); 
+
+    document.write('<div id="chart_div"></div>');
+    document.write('</td></tr></table>'); 
+    google.charts.load('current', {packages: ['corechart', 'line']});
+  
+    // Create canvases 
+    for (var id='0'; id<num_games; id++) {
+      document.write('<canvas width="' + board_size + '" height="' + board_size + '" id="snake_canvas_' + id + '"></canvas> ');
+    }
+    
+    for (var i=0; i<num_games; i++) {
+      games.push(make_game(i)); 
+    }
+    window.onkeyup = function(e) {
+      games[0].keypress(e); 
+    }
+    
+    iterate(games); 
+  }    
+  
+
+
+  
+
+  //start(); 
+  
+</script>
+</body>
+</html>
