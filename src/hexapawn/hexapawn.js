@@ -273,6 +273,7 @@ function make_move_from_state(node) {
 
 function machine_move() {
 
+	if (game_mode == 0) { return false; }
 	if (game_over) { return false; }
 	if (legal_moves.length<1) { return false; } 
 	
