@@ -45,7 +45,7 @@ var svg = d3.select("body").append("svg")
 
 d3.select(self.frameElement).style("height", "800px");
 
-var smallradius = 1;
+var smallradius = 5;
 var bigradius = 7;
 
 function make_root(name_of_root_node) {
@@ -170,8 +170,16 @@ function update(source) {
 	  	return d.circlesize; 
 	  })
 	  .style("fill", function(d) { 
-	  	if (d.highlight) { return '#f00'; }
-	  	return "#fff"; 
+	  	//if (d.highlight) { return '#f00'; }
+	  	
+	  	//return "#fff"; 
+	  	// Fill the circle to indicate the win-loss ratio between players 1 and 2
+	  	var windiff = 8 + 2*(d.playerwins[0]-d.playerwins[1]);  // Consider swapping
+	  	//console.log(windiff); 
+	  	if (windiff<0)  { windiff = 0 };
+	  	if (windiff>15) { windiff = 15 };
+	  	var ws = windiff.toString(16)
+	  	return "#"+ws+ws+ws; 
 	  });
 
   nodeUpdate.select("text")
@@ -221,22 +229,3 @@ function update(source) {
 	d.y0 = d.y;
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
